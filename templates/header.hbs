@@ -1,0 +1,102 @@
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,400;1,600;1,800;1,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet"/>
+<script id="ze-snippet" src="https://static.zdassets.com/ekr/snippet.js?key=1b4b1471-7640-42b6-a423-4ec41ed61d64"></script>
+{{#if signed_in}}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    function initAuth() {
+      if (typeof zE === 'undefined') {
+        setTimeout(initAuth, 500);
+        return;
+      }
+      zE('messenger:set', 'hideLauncher', true);
+      // Previously this fetched /api/v2/help_center/integration/token.json
+      // and passed the result into loginUser. That endpoint is real, but it
+      // issues a Help Center JWT for third-party integrations — a different
+      // token shape/algorithm (RS256 + Help-Center-specific claims) than
+      // what Messaging's loginUser expects (HS256 + {scope, external_id,
+      // name}). That mismatch caused 401 "not correct" login failures.
+      // Since everyone reaching this is already an authenticated Help
+      // Center visitor, useSessionAuth is the correct, documented tool for
+      // this case — no custom JWT needed at all.
+      zE('messenger', 'useSessionAuth');
+      // The widget remembers "I was open" across page loads — without this,
+      // navigating away from an active ask-ai conversation (e.g. clicking
+      // "Back to Home") causes it to re-open as a floating panel on
+      // whatever page loads next, since that page has no embed container
+      // for it to render into. Force it closed by default everywhere
+      // except the dedicated ask-ai page and the search results page, both
+      // of which explicitly render it into their own embed container instead.
+      try { zE('messenger', 'close'); } catch (e) {}
+      fetch('/api/v2/users/me.json')
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+          var userData = data.user;
+          if (!userData || !userData.organization_id) return;
+          fetch('/api/v2/organizations/' + userData.organization_id + '.json')
+            .then(function(response) { return response.json(); })
+            .then(function(orgData) {
+              var companyName = orgData.organization && orgData.organization.name;
+              if (companyName) {
+                zE('messenger:set', 'conversationFields', [
+                  { id: '46080466460173', value: companyName }
+                ]);
+                var orgLabel = document.querySelector('.sc-user__org');
+                if (orgLabel) orgLabel.textContent = companyName;
+              }
+            });
+        });
+    }
+    initAuth();
+  });
+</script>
+{{/if}}
+
+<a class="sc-skip-link" href="#main-content">Skip to main content</a>
+<header class="sc-header" role="banner">
+  <div class="sc-header__inner">
+    <a class="sc-brand" href="{{page_path 'home'}}" aria-label="Stellar Cyber Customer Success home">
+      <img class="sc-brand__logo" src="{{asset 'stellar-cyber-logo.svg'}}" alt="Stellar Cyber" height="70">
+      <span class="sc-brand__divider" aria-hidden="true"></span>
+      <span class="sc-brand__title">Customer Success</span>
+    </a>
+
+    <nav class="sc-header__nav" aria-label="Utility">
+      <a class="sc-header__link sc-header__link--hide-sm" href="https://stellarcyber.ai" target="_blank" rel="noopener">
+        See Stellar Cyber
+        <svg class="sc-icon sc-icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg>
+      </a>
+
+      <details class="sc-dropdown">
+        <summary class="sc-header__link">
+          <svg class="sc-icon sc-icon--phone" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15.2 15.2 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1Z"/></svg>
+          <span class="sc-label">Escalation Hotlines</span>
+          <svg class="sc-icon sc-icon--sm sc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="sc-dropdown__menu">
+          <a href="tel:+18445054668"><span>US</span><span>+1 844-505-4668</span></a>
+          <a href="tel:+448085310091"><span>UK</span><span>+44 808-531-0091</span></a>
+        </div>
+      </details>
+
+      {{#if signed_in}}
+      <details class="sc-dropdown">
+        <summary class="sc-user">
+          <span class="sc-avatar">{{user_avatar}}</span>
+          <span class="sc-user__meta">
+            <span class="sc-user__name">{{user_name}}</span>
+            <span class="sc-user__org"></span>
+          </span>
+          <svg class="sc-icon sc-icon--sm sc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </summary>
+        <div class="sc-dropdown__menu" role="menu">
+          {{#my_profile}}My profile{{/my_profile}}
+          {{#link 'requests'}}My requests{{/link}}
+          <div class="sc-dropdown__sep"></div>
+          {{#link 'sign_out'}}Sign out{{/link}}
+        </div>
+      </details>
+      {{/if}}
+    </nav>
+  </div>
+</header>

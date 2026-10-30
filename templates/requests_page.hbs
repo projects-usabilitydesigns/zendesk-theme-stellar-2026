@@ -1,0 +1,566 @@
+<style>
+  .sc-req-page-head{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:20px;}
+  .sc-req-page-head h1{font-size:22px;margin:0 0 4px;}
+  .sc-req-page-head p{margin:0;color:#6b7280;font-size:13.5px;}
+
+  .sc-time-control{display:flex;align-items:center;gap:10px;}
+  .sc-period-toggle{display:flex;background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;}
+  .sc-period-toggle button{border:none;background:transparent;padding:7px 12px;font-size:12.5px;color:#6b7280;cursor:pointer;font-weight:600;}
+  .sc-period-toggle button.active{background:#0a1a33;color:#fff;}
+  .sc-range-nav{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:5px 6px;}
+  .sc-range-nav button{width:26px;height:26px;border-radius:6px;border:1px solid #e5e7eb;background:#fff;cursor:pointer;color:#111827;font-size:13px;}
+  .sc-range-nav button:hover{background:#f1f4f8;}
+  .sc-range-nav button:disabled{opacity:.35;cursor:not-allowed;}
+  .sc-range-label{font-size:13px;font-weight:700;min-width:110px;text-align:center;}
+  .sc-time-note{font-size:10.5px;color:#9ca3af;margin-left:4px;}
+
+  .sc-req-crumb{display:flex;align-items:center;gap:8px;font-size:13px;color:#6b7280;margin-bottom:14px;}
+  .sc-req-crumb a{color:#2f6fed;cursor:pointer;font-weight:600;text-decoration:none;}
+  .sc-req-crumb .sep{color:#c3ccd6;}
+  .sc-req-crumb .current{color:#111827;font-weight:700;}
+
+  .sc-tier-label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#6b7280;margin:0 0 8px;}
+  .sc-cards-primary{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+  @media (max-width:900px){.sc-cards-primary{grid-template-columns:1fr;}}
+  .sc-card-lg{background:#fff;border-radius:10px;padding:22px 24px;cursor:pointer;transition:box-shadow .15s, transform .15s;}
+  .sc-card-lg:hover{box-shadow:0 4px 14px rgba(20,30,50,.1);transform:translateY(-1px);}
+  .sc-card-lg .sc-card-label{font-size:14px;font-weight:600;color:#111827;margin-bottom:6px;}
+  .sc-card-lg .sc-card-num{font-size:40px;font-weight:800;line-height:1;}
+  .sc-card-lg .sc-card-sub{font-size:11.5px;color:#6b7280;margin-top:6px;}
+  .sc-card-blue{border-top:4px solid #3b82f6;} .sc-card-blue .sc-card-num{color:#2f6fed;}
+  .sc-card-orange{border-top:4px solid #f59e0b;} .sc-card-orange .sc-card-num{color:#d9660f;}
+  .sc-card-red{border-top:4px solid #f97316;} .sc-card-red .sc-card-num{color:#e0522f;}
+
+  .sc-panels{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+  @media (max-width:900px){.sc-panels{grid-template-columns:1fr;}}
+  .sc-panel{background:#f8f9fb;border-radius:8px;padding:20px;}
+  .sc-panel-title{font-size:14px;font-weight:600;color:#111827;margin-bottom:2px;}
+  .sc-panel-desc{font-size:12px;color:#6b7280;margin-bottom:16px;}
+  .sc-legend-item{cursor:pointer;padding:3px 4px;border-radius:5px;}
+  .sc-legend-item:hover{background:#eef1f4;}
+
+  .sc-ai-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:10px;}
+  @media (max-width:900px){.sc-ai-cards{grid-template-columns:repeat(2,1fr);}}
+  .sc-ai-card{background:#fff;border-radius:10px;padding:18px;border-top:4px solid #7c3aed;}
+  .sc-ai-card.sc-ask-ai{background:linear-gradient(180deg,#faf5ff,#fff);}
+  .sc-ai-icon{width:34px;height:34px;border-radius:8px;background:#f4f0fe;color:#7c3aed;display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:10px;}
+  .sc-ask-ai .sc-ai-icon{background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;}
+  .sc-ai-card .sc-ai-title{font-size:14px;font-weight:700;color:#111827;margin-bottom:3px;}
+  .sc-ai-card .sc-ai-sub{font-size:12px;color:#6b7280;}
+</style>
+
+<div class="container">
+
+  <div class="sc-req-page-head">
+    <div>
+      <h1>My Requests</h1>
+      <p>Overview of your ticket activity</p>
+    </div>
+    <div class="sc-time-control">
+      <div class="sc-period-toggle" id="sc-period-toggle">
+        <button data-period="week">Week</button>
+        <button data-period="month" class="active">Month</button>
+        <button data-period="quarter">Quarter</button>
+        <button data-period="year">Year</button>
+      </div>
+      <div class="sc-range-nav">
+        <button id="sc-range-prev" title="Earlier period">‹</button>
+        <div class="sc-range-label" id="sc-range-label">Last month</div>
+        <button id="sc-range-next" title="Later period">›</button>
+      </div>
+      <span class="sc-time-note">(visual only for now — always shows all-time data)</span>
+    </div>
+  </div>
+
+  <div class="sc-req-crumb" id="sc-req-crumb" style="display:none;">
+    <a onclick="scCloseDrill()">Overview</a><span class="sep">/</span><span class="current" id="sc-req-crumb-label"></span>
+  </div>
+
+  <div id="sc-overview-loading" style="padding:2rem 0;color:#6b7280;font-size:14px;">Loading overview…</div>
+  <div id="sc-overview-error" style="display:none;padding:1rem;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;color:#991b1b;font-size:14px;"></div>
+
+  <div id="sc-overview-content" style="display:none;">
+
+    <p class="sc-tier-label">Your active requests</p>
+    <div class="sc-cards-primary">
+      <div class="sc-card-lg sc-card-blue" onclick="scOpenDrill('open','Your requests')">
+        <div class="sc-card-label">Your requests</div>
+        <div class="sc-card-num" id="sc-ov-open">—</div>
+        <div class="sc-card-sub">Open · our team is working on these</div>
+      </div>
+      <div class="sc-card-lg sc-card-orange" onclick="scOpenDrill('pending','Waiting for your reply')">
+        <div class="sc-card-label">Waiting for your reply</div>
+        <div class="sc-card-num" id="sc-ov-pending">—</div>
+        <div class="sc-card-sub">We need something from you to continue (e.g. logs, access)</div>
+      </div>
+      <div class="sc-card-lg sc-card-red" onclick="scOpenDrill('feature','Feature requests')">
+        <div class="sc-card-label">Feature requests</div>
+        <div class="sc-card-num" id="sc-ov-fr">—</div>
+        <div class="sc-card-sub" id="sc-ov-fr-sub">—</div>
+      </div>
+    </div>
+
+    <div class="sc-panels">
+      <div class="sc-panel">
+        <div class="sc-panel-title">Tickets by status</div>
+        <div class="sc-panel-desc">Click a status to see those tickets</div>
+        <div id="sc-ov-status-donut" style="display:flex;flex-direction:column;align-items:center;gap:14px;"></div>
+      </div>
+      <div class="sc-panel">
+        <div class="sc-panel-title">Tickets by type</div>
+        <div class="sc-panel-desc">Click a type to see those tickets</div>
+        <div id="sc-ov-type-donut" style="display:flex;flex-direction:column;align-items:center;gap:14px;"></div>
+      </div>
+      <div class="sc-panel">
+        <div class="sc-panel-title">Tickets by severity</div>
+        <div class="sc-panel-desc">Click a severity to see those tickets</div>
+        <div id="sc-ov-severity-donut" style="display:flex;flex-direction:column;align-items:center;gap:14px;"></div>
+      </div>
+    </div>
+
+    <!-- Visual only for now — same treatment as the homepage's AI cards, wiring deferred -->
+    <p class="sc-tier-label">Get help from AI</p>
+    <div class="sc-ai-cards">
+      <div class="sc-ai-card sc-ask-ai" style="cursor:pointer;" onclick="window.location.href='/hc/en-us/p/ask-ai';">
+        <div class="sc-ai-icon">✦</div>
+        <div class="sc-ai-title">Ask AI</div>
+        <div class="sc-ai-sub">Not sure? Describe your issue and we'll point you the right way</div>
+      </div>
+      <div class="sc-ai-card">
+        <div class="sc-ai-icon">⚡</div>
+        <div class="sc-ai-title">Connectors</div>
+        <div class="sc-ai-sub">Setup, authentication &amp; troubleshooting</div>
+      </div>
+      <div class="sc-ai-card">
+        <div class="sc-ai-icon">🗄</div>
+        <div class="sc-ai-title">Data Import &amp; Storage</div>
+        <div class="sc-ai-sub">Import requests, S3 access &amp; data studies</div>
+      </div>
+      <div class="sc-ai-card">
+        <div class="sc-ai-icon">🔔</div>
+        <div class="sc-ai-title">Alerts &amp; Cases</div>
+        <div class="sc-ai-sub">Detection, correlation &amp; case management</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== DRILL-THROUGH TABLE (real data, reused from the old Tickets/Feature Requests tabs) ===== -->
+  <div id="sc-drill-content" style="display:none;">
+    <div class="requests" id="sc-drill-table-wrap">
+      <table class="table my-activities-table requests-table">
+        <thead>
+          <tr>
+            <th style="cursor:pointer;" onclick="scSortDrill('created')">{{t 'created'}} <span id="sc-sort-drill-created"></span></th>
+            <th style="cursor:pointer;" onclick="scSortDrill('id')">{{t 'id'}} <span id="sc-sort-drill-id"></span></th>
+            <th style="cursor:pointer;" onclick="scSortDrill('severity')">Severity <span id="sc-sort-drill-severity"></span></th>
+            <th>{{t 'subject'}}</th>
+            <th style="cursor:pointer;" onclick="scSortDrill('last_activity')">{{t 'last_activity'}} <span id="sc-sort-drill-last_activity"></span></th>
+            <th style="cursor:pointer;" onclick="scSortDrill('status')">{{t 'status'}} <span id="sc-sort-drill-status"></span></th>
+          </tr>
+        </thead>
+        <tbody id="sc-drill-tbody"></tbody>
+      </table>
+      <p id="sc-drill-empty" class="no-activities" style="display:none;">No tickets match this filter.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ── Custom field IDs (sandbox — verify per-environment before reuse) ──
+  var SC_TICKET_TYPE_FIELD_ID = 43873167738253;
+  var SC_TICKET_TYPE_FEATURE_VALUE = 'feature/enhancement_request';
+  var SC_SEVERITY_FIELD_ID = 43873122388237;
+
+  var SC_SEVERITY_LABELS = {
+    '1-critical': '1 - Critical',
+    '2-high': '2 - High',
+    '3-medium': '3 - Medium',
+    '4-low': '4 - Low'
+  };
+
+  function scGetCustomFieldValue(request, fieldId) {
+    if (!request.custom_fields) return null;
+    for (var i = 0; i < request.custom_fields.length; i++) {
+      if (request.custom_fields[i].id === fieldId) {
+        return request.custom_fields[i].value;
+      }
+    }
+    return null;
+  }
+
+  function scFormatSeverity(request) {
+    var raw = scGetCustomFieldValue(request, SC_SEVERITY_FIELD_ID);
+    if (!raw) return '—';
+    return SC_SEVERITY_LABELS[raw] || raw;
+  }
+
+  function scFormatDate(iso) {
+    if (!iso) return '—';
+    var d = new Date(iso);
+    var day = String(d.getDate()).padStart(2, '0');
+    var month = String(d.getMonth() + 1).padStart(2, '0');
+    var year = d.getFullYear();
+    return day + '/' + month + '/' + year;
+  }
+
+  function scEscapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function scRenderRow(request) {
+    var subject = request.subject || (request.description ? request.description.substring(0, 50) : '');
+    return '<tr>' +
+      '<td>' + scFormatDate(request.created_at) + '</td>' +
+      '<td>#' + request.id + '</td>' +
+      '<td>' + scEscapeHtml(scFormatSeverity(request)) + '</td>' +
+      '<td class="request-info requests-table-info">' +
+        '<a href="/hc/requests/' + request.id + '" class="striped-list-title" title="' + scEscapeHtml(subject) + '">' + scEscapeHtml(subject) + '</a>' +
+      '</td>' +
+      '<td>' + scFormatDate(request.updated_at) + '</td>' +
+      '<td class="requests-table-status">' +
+        '<span class="status-label status-label-' + request.status + '">' + scEscapeHtml(request.status) + '</span>' +
+      '</td>' +
+    '</tr>';
+  }
+
+  function scFetchAllRequests(callback, errorCallback) {
+    var all = [];
+
+    function fetchPage(url) {
+      fetch(url, { headers: { 'Accept': 'application/json' }, cache: 'no-store' })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Request failed with status ' + res.status);
+          return res.json();
+        })
+        .then(function (data) {
+          all = all.concat(data.requests || []);
+
+          // Legacy offset pagination
+          if (data.next_page) {
+            fetchPage(data.next_page);
+            return;
+          }
+
+          // Cursor-based pagination (triggered by page[size] param)
+          if (data.meta && data.meta.has_more && data.links && data.links.next) {
+            fetchPage(data.links.next);
+            return;
+          }
+
+          callback(all);
+        })
+        .catch(function (err) {
+          errorCallback(err);
+        });
+    }
+
+    // Org-wide requests need the signed-in user's organization_id first.
+    // /api/v2/requests.json only ever returns "my own" requests, regardless
+    // of the user's Access setting — the org-scoped endpoint is what
+    // actually respects "Can view tickets from user's org".
+    fetch('/api/v2/users/me.json', { headers: { 'Accept': 'application/json' }, cache: 'no-store' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('Could not load current user (status ' + res.status + ')');
+        return res.json();
+      })
+      .then(function (data) {
+        var orgId = data.user && data.user.organization_id;
+        if (orgId) {
+          fetchPage('/api/v2/organizations/' + orgId + '/requests.json?page[size]=100');
+        } else {
+          // No organization on this user — fall back to their own requests only
+          fetchPage('/api/v2/requests.json?page[size]=100');
+        }
+      })
+      .catch(function (err) {
+        errorCallback(err);
+      });
+  }
+
+  var SC_ALL_REQUESTS = [];
+  var SC_DRILL_DATA = [];
+  var SC_DRILL_SORT = { field: 'created', dir: 'desc' };
+
+  function scSeverityRawValue(request) {
+    return scGetCustomFieldValue(request, SC_SEVERITY_FIELD_ID) || 'unclassified';
+  }
+
+  function scSeverityRank(request) {
+    var raw = scGetCustomFieldValue(request, SC_SEVERITY_FIELD_ID);
+    if (raw === '1-critical') return 1;
+    if (raw === '2-high') return 2;
+    if (raw === '3-medium') return 3;
+    if (raw === '4-low') return 4;
+    return 5; // Unclassified sorts last
+  }
+
+  function scGetSortValue(request, field) {
+    switch (field) {
+      case 'created': return new Date(request.created_at).getTime() || 0;
+      case 'last_activity': return new Date(request.updated_at).getTime() || 0;
+      case 'id': return request.id;
+      case 'severity': return scSeverityRank(request);
+      case 'status': return request.status || '';
+      default: return 0;
+    }
+  }
+
+  function scSortRequests(arr, field, dir) {
+    var sorted = arr.slice();
+    sorted.sort(function (a, b) {
+      var av = scGetSortValue(a, field);
+      var bv = scGetSortValue(b, field);
+      if (av < bv) return dir === 'asc' ? -1 : 1;
+      if (av > bv) return dir === 'asc' ? 1 : -1;
+      return 0;
+    });
+    return sorted;
+  }
+
+  // ── Drill-through: click a card / legend item to see the matching tickets ──
+  // Reuses the exact same row-rendering/sorting logic that used to power the
+  // separate Tickets and Feature Requests tabs — just applied to an arbitrary
+  // filter instead of the fixed "is it a feature request or not" split.
+
+  var SC_DRILL_FILTERS = {
+    open: function (r) {
+      return r.status !== 'solved' && r.status !== 'closed' && r.status !== 'hold' && r.status !== 'pending';
+    },
+    pending: function (r) { return r.status === 'pending'; },
+    hold: function (r) { return r.status === 'hold'; },
+    resolved: function (r) { return r.status === 'solved' || r.status === 'closed'; },
+    feature: function (r) { return scGetCustomFieldValue(r, SC_TICKET_TYPE_FIELD_ID) === SC_TICKET_TYPE_FEATURE_VALUE; },
+    product: function (r) { return scGetCustomFieldValue(r, SC_TICKET_TYPE_FIELD_ID) === 'product_issue'; },
+    question: function (r) { return scGetCustomFieldValue(r, SC_TICKET_TYPE_FIELD_ID) === 'questions/task'; },
+    other_type: function (r) {
+      var t = scGetCustomFieldValue(r, SC_TICKET_TYPE_FIELD_ID);
+      return t !== 'product_issue' && t !== 'questions/task' && t !== SC_TICKET_TYPE_FEATURE_VALUE;
+    },
+    critical: function (r) { return scGetCustomFieldValue(r, SC_SEVERITY_FIELD_ID) === '1-critical'; },
+    high: function (r) { return scGetCustomFieldValue(r, SC_SEVERITY_FIELD_ID) === '2-high'; },
+    medium: function (r) { return scGetCustomFieldValue(r, SC_SEVERITY_FIELD_ID) === '3-medium'; },
+    low: function (r) { return scGetCustomFieldValue(r, SC_SEVERITY_FIELD_ID) === '4-low'; },
+    unclassified: function (r) { return !scGetCustomFieldValue(r, SC_SEVERITY_FIELD_ID); }
+  };
+
+  function scRenderDrillTable() {
+    var sorted = scSortRequests(SC_DRILL_DATA, SC_DRILL_SORT.field, SC_DRILL_SORT.dir);
+    document.getElementById('sc-drill-tbody').innerHTML = sorted.map(scRenderRow).join('');
+    document.getElementById('sc-drill-empty').style.display = sorted.length === 0 ? 'block' : 'none';
+
+    var fields = ['created', 'id', 'severity', 'last_activity', 'status'];
+    fields.forEach(function (f) {
+      var el = document.getElementById('sc-sort-drill-' + f);
+      if (!el) return;
+      el.textContent = (f === SC_DRILL_SORT.field) ? (SC_DRILL_SORT.dir === 'asc' ? '▲' : '▼') : '';
+    });
+  }
+
+  function scSortDrill(field) {
+    if (SC_DRILL_SORT.field === field) {
+      SC_DRILL_SORT.dir = SC_DRILL_SORT.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+      SC_DRILL_SORT.field = field;
+      SC_DRILL_SORT.dir = 'asc';
+    }
+    scRenderDrillTable();
+  }
+
+  function scOpenDrill(filterKey, title) {
+    var filterFn = SC_DRILL_FILTERS[filterKey];
+    SC_DRILL_DATA = filterFn ? SC_ALL_REQUESTS.filter(filterFn) : SC_ALL_REQUESTS.slice();
+    SC_DRILL_SORT = { field: 'created', dir: 'desc' };
+
+    document.getElementById('sc-overview-content').style.display = 'none';
+    document.getElementById('sc-drill-content').style.display = 'block';
+    document.getElementById('sc-req-crumb').style.display = 'flex';
+    document.getElementById('sc-req-crumb-label').textContent = title;
+
+    scRenderDrillTable();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function scCloseDrill() {
+    document.getElementById('sc-overview-content').style.display = 'block';
+    document.getElementById('sc-drill-content').style.display = 'none';
+    document.getElementById('sc-req-crumb').style.display = 'none';
+  }
+
+  // ── Overview — stat cards + donuts (status / type / severity) ──────
+
+  var SC_STATUS_COLORS = { resolved: '#10b981', hold: '#9ca3af', pending: '#f59e0b', open: '#3b82f6' };
+  var SC_TYPE_COLORS = { product_issue: '#3b82f6', questions: '#10b981', feature_req: '#f97316', other: '#d1d5db' };
+  var SC_SEVERITY_COLORS = { critical: '#ef4444', high: '#f59e0b', medium: '#3b82f6', low: '#10b981', unclassified: '#d1d5db' };
+
+  function scBuildDonutSVG(segments, size) {
+    size = size || 140;
+    var radius = size / 2 - 10;
+    var circumference = 2 * Math.PI * radius;
+    var center = size / 2;
+    var total = segments.reduce(function (sum, s) { return sum + s.value; }, 0);
+    var offset = 0;
+
+    var circles = segments.map(function (s) {
+      var fraction = total > 0 ? s.value / total : 0;
+      var dash = fraction * circumference;
+      var gap = circumference - dash;
+      var circle = '<circle cx="' + center + '" cy="' + center + '" r="' + radius + '" ' +
+        'fill="none" stroke="' + s.color + '" stroke-width="18" ' +
+        'stroke-dasharray="' + dash + ' ' + gap + '" ' +
+        'stroke-dashoffset="' + (-offset) + '" ' +
+        'transform="rotate(-90 ' + center + ' ' + center + ')" />';
+      offset += dash;
+      return circle;
+    }).join('');
+
+    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" style="flex-shrink:0;">' +
+      circles +
+      '<text x="' + center + '" y="' + (center - 4) + '" text-anchor="middle" font-size="20" font-weight="700" fill="#111827">' + total + '</text>' +
+      '<text x="' + center + '" y="' + (center + 14) + '" text-anchor="middle" font-size="10" fill="#6b7280">total</text>' +
+      '</svg>';
+  }
+
+  function scBuildLegend(segments) {
+    return '<div style="display:flex;flex-direction:column;gap:6px;width:100%;">' +
+      segments.map(function (s) {
+        var click = s.key ? ' onclick="scOpenDrill(\'' + s.key + '\',\'' + s.label.replace(/'/g, "\\'") + '\')"' : '';
+        var cls = s.key ? ' sc-legend-item' : '';
+        return '<div class="' + cls + '" style="display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;color:#374151;padding:2px 4px;"' + click + '>' +
+          '<span style="display:flex;align-items:center;gap:8px;">' +
+            '<span style="width:9px;height:9px;border-radius:2px;background:' + s.color + ';display:inline-block;flex-shrink:0;"></span>' +
+            s.label +
+          '</span>' +
+          '<strong>' + s.value + '</strong>' +
+        '</div>';
+      }).join('') +
+      '</div>';
+  }
+
+  function scComputeAndRenderOverview(allRequests) {
+    var total = allRequests.length;
+
+    var resolvedCount = 0, holdCount = 0, pendingCount = 0, openCount = 0;
+    var typeCounts = { product_issue: 0, questions: 0, feature_req: 0, other: 0 };
+    var sevCounts = { critical: 0, high: 0, medium: 0, low: 0, unclassified: 0 };
+    var frTotal = 0, frResolved = 0;
+
+    allRequests.forEach(function (r) {
+      if (r.status === 'solved' || r.status === 'closed') resolvedCount++;
+      else if (r.status === 'hold') holdCount++;
+      else if (r.status === 'pending') pendingCount++;
+      else openCount++;
+
+      var ticketType = scGetCustomFieldValue(r, SC_TICKET_TYPE_FIELD_ID);
+      if (ticketType === 'product_issue') typeCounts.product_issue++;
+      else if (ticketType === 'questions/task') typeCounts.questions++;
+      else if (ticketType === SC_TICKET_TYPE_FEATURE_VALUE) typeCounts.feature_req++;
+      else typeCounts.other++;
+
+      if (ticketType === SC_TICKET_TYPE_FEATURE_VALUE) {
+        frTotal++;
+        if (r.status === 'solved' || r.status === 'closed') frResolved++;
+      }
+
+      var sev = scGetCustomFieldValue(r, SC_SEVERITY_FIELD_ID);
+      if (sev === '1-critical') sevCounts.critical++;
+      else if (sev === '2-high') sevCounts.high++;
+      else if (sev === '3-medium') sevCounts.medium++;
+      else if (sev === '4-low') sevCounts.low++;
+      else sevCounts.unclassified++;
+    });
+
+    var frPct = frTotal > 0 ? ((frResolved / frTotal) * 100).toFixed(1) : '0.0';
+
+    // Primary cards
+    document.getElementById('sc-ov-open').textContent = openCount;
+    document.getElementById('sc-ov-pending').textContent = pendingCount;
+    document.getElementById('sc-ov-fr').textContent = frTotal;
+    document.getElementById('sc-ov-fr-sub').textContent = frResolved + ' resolved (' + frPct + '%)';
+
+    // Status donut
+    var statusSegments = [
+      { label: 'Your requests', value: openCount, color: SC_STATUS_COLORS.open, key: 'open' },
+      { label: 'Waiting for your reply', value: pendingCount, color: SC_STATUS_COLORS.pending, key: 'pending' },
+      { label: 'With our engineering team', value: holdCount, color: SC_STATUS_COLORS.hold, key: 'hold' },
+      { label: 'Resolved', value: resolvedCount, color: SC_STATUS_COLORS.resolved, key: 'resolved' }
+    ];
+    document.getElementById('sc-ov-status-donut').innerHTML =
+      scBuildDonutSVG(statusSegments, 170) + scBuildLegend(statusSegments);
+
+    // Type donut
+    var typeSegments = [
+      { label: 'Product issue', value: typeCounts.product_issue, color: SC_TYPE_COLORS.product_issue, key: 'product' },
+      { label: 'Questions', value: typeCounts.questions, color: SC_TYPE_COLORS.questions, key: 'question' },
+      { label: 'Feature req', value: typeCounts.feature_req, color: SC_TYPE_COLORS.feature_req, key: 'feature' },
+      { label: 'Other', value: typeCounts.other, color: SC_TYPE_COLORS.other, key: 'other_type' }
+    ];
+    document.getElementById('sc-ov-type-donut').innerHTML =
+      scBuildDonutSVG(typeSegments, 170) + scBuildLegend(typeSegments);
+
+    // Severity donut (was a bar chart before — converted to match the other two panels)
+    var sevSegments = [
+      { label: 'Critical', value: sevCounts.critical, color: SC_SEVERITY_COLORS.critical, key: 'critical' },
+      { label: 'High', value: sevCounts.high, color: SC_SEVERITY_COLORS.high, key: 'high' },
+      { label: 'Medium', value: sevCounts.medium, color: SC_SEVERITY_COLORS.medium, key: 'medium' },
+      { label: 'Low', value: sevCounts.low, color: SC_SEVERITY_COLORS.low, key: 'low' },
+      { label: 'Unclassified', value: sevCounts.unclassified, color: SC_SEVERITY_COLORS.unclassified, key: 'unclassified' }
+    ];
+    document.getElementById('sc-ov-severity-donut').innerHTML =
+      scBuildDonutSVG(sevSegments, 170) + scBuildLegend(sevSegments);
+
+    document.getElementById('sc-overview-loading').style.display = 'none';
+    document.getElementById('sc-overview-content').style.display = 'block';
+  }
+
+  function scShowFetchError(err) {
+    document.getElementById('sc-overview-loading').style.display = 'none';
+    document.getElementById('sc-overview-error').style.display = 'block';
+    document.getElementById('sc-overview-error').textContent = 'Could not load overview: ' + err.message;
+  }
+
+  // ── Time-range control (visual only — see note in the header) ──────
+  (function () {
+    var periodBtns = document.querySelectorAll('#sc-period-toggle button');
+    var rangeLabel = document.getElementById('sc-range-label');
+    var periodOffset = 1, currentPeriod = 'month';
+    var periodLabels = {
+      week: ['This week', 'Last week'],
+      month: ['This month', 'Last month'],
+      quarter: ['This quarter', 'Last quarter'],
+      year: ['This year', 'Last year']
+    };
+    function render() {
+      var labels = periodLabels[currentPeriod];
+      rangeLabel.textContent = periodOffset === 0 ? labels[0] : (periodOffset === 1 ? labels[1] : (periodOffset + ' ' + currentPeriod + 's ago'));
+      document.getElementById('sc-range-next').disabled = periodOffset === 0;
+    }
+    periodBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        periodBtns.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        currentPeriod = btn.getAttribute('data-period');
+        periodOffset = 1;
+        render();
+      });
+    });
+    document.getElementById('sc-range-prev').addEventListener('click', function () { periodOffset++; render(); });
+    document.getElementById('sc-range-next').addEventListener('click', function () { periodOffset = Math.max(0, periodOffset - 1); render(); });
+    render();
+  })();
+
+  document.addEventListener('DOMContentLoaded', function () {
+    scFetchAllRequests(function (allRequests) {
+      SC_ALL_REQUESTS = allRequests;
+      scComputeAndRenderOverview(allRequests);
+    }, function (err) {
+      scShowFetchError(err);
+    });
+  });
+</script>

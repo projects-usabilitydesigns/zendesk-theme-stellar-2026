@@ -1,0 +1,178 @@
+{{!-- Custom CSS --}}
+<style>
+    /* Add your custom CSS styles here */
+    body {
+        background-color: #f0f0f0;
+        font-size: 16px !important;
+    }
+    .signup-form {
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 5px;
+        background-color: #fff;
+        max-width: 400px;
+        margin: 0 auto;
+        margin-top: 50px;
+        position: relative;
+    }
+    .signup-form input[type="text"],
+    .signup-form input[type="email"],
+    .signup-form input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        font-size: 16px !important;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+    .signup-form button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 18px !important;
+        margin-top: 5px;
+        opacity: 1.0;
+    }
+    .signup-form button[disabled] {
+        opacity: 0.5 !important;
+    }
+    .error {
+        padding: 2px 8px;
+        font-size: 12px;
+        margin:2px 0px 4px;
+        border-radius: 2px;
+        color:darkred;
+    }
+    .success-message {
+        background-color: #d4edda; 
+        color: #155724; 
+        font-size: 16px;
+        padding: 10px; 
+        border-radius: 5px; 
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    .error-message {
+        background-color: #ffefee; 
+        color: darkred; 
+        font-size: 16px;
+        padding: 10px; 
+        border-radius: 5px; 
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    .loader {
+        display: none;
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        left: 45%;
+        top: 45%;
+        z-index: 999;
+    }
+    .signup-form.showloader #signupForm {
+        opacity: 0.5;
+    }
+    .signup-form.showloader .loader {
+        display: block;
+    }
+</style>
+{{!-- Custom HTML --}}
+<div class="signup-form">
+    <h2>Sign Up</h2>
+    <div class="success-message" style="display: none;">
+        <img src="https://stellarcyber.ai/wp-content/uploads/2024/03/checked.png" style="width: 20px; height: auto; margin-bottom: 5px;"/><br/>
+        Thank you for signing up! You will soon receive a confirmation message in your inbox shortly.
+    </div>
+    <div class="error-message" style="display: none;">
+        <img src="https://stellarcyber.ai/wp-content/uploads/2024/03/error.png" style="width: 20px; height: auto; margin-bottom: 5px;"/><br/>
+        Sorry, your registration was not successful. <br/>A Stellar Cyber representative will contact you to assist with your account
+    </div>
+    <img src="https://stellarcyber.ai/wp-content/uploads/2024/03/ring-loading-image.gif" class="loader"/>
+    <form id="signupForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="full_name" required onchange="checkform()">
+        <span class="error" id="nameError"></span>
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required onchange="checkform()">
+        <span class="error" id="emailError"></span>
+        
+        <button type="submit" id="submitButton">Sign Up</button>
+    </form>
+</div>
+<script>
+    var checkform = function(){
+        if($('#name').val() !== "" && $('#email').val() !== ""){
+            $("#submitButton").removeAttr("disabled");
+        }
+    }
+    $(document).ready(function() {
+        $("#submitButton").attr("disabled", "disabled");
+        $('.error-message, .success-message').hide();
+        $('#signupForm').submit(function(event) {
+            $('.signup-form').addClass("showloader");
+            jQuery.ajax({
+                // url: 'https://fn5s8z36nh.execute-api.us-west-2.amazonaws.com/staging/sendZendeskRequest?email='+$('#email').val()+'&full_name='+$('#name').val(),
+                url: 'https://frnoozwcoh.execute-api.us-east-1.amazonaws.com/Prod/sendZendeskRequest?email='+$('#email').val()+'&full_name='+$('#name').val(),
+                type: 'POST',
+								// dataType: 'jsonp',
+                headers: {
+                    'x-api-key' : 'vh7N0aK3ND9TD7ebxulC78OSC40S4uKK5DLbMska',
+                },
+                success: function(response) {
+                    if(response === "TRUE"){
+                        $('#name').val("");
+                        $('#email').val("");
+                        $('.success-message').show();
+                    } else {
+                        $('.error-message').show();
+                    }
+                    $('.signup-form').removeClass("showloader");
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    $('.error-message').show();
+                    $('.signup-form').removeClass("showloader");
+                },
+				complete: function() {
+					// alert('Request completed.');
+				}
+            });
+			event.preventDefault();
+        });
+
+        function validateForm() {
+            var name = $('#name').val();
+            var email = $('#email').val();
+            var isValid = true; 
+            if (name.trim() === '') {
+                $('#nameError').text('Please enter your name.');
+                isValid = false;
+            } else {
+                $('#nameError').text('');
+            }
+            if (email.trim() === '') {
+                $('#emailError').text('Please enter your email address.');
+                isValid = false;
+            } else if (!isValidEmail(email)) {
+                $('#emailError').text('Please enter a valid email address.');
+                isValid = false;
+            } else {
+                $('#emailError').text('');
+            }
+            return isValid;
+        }
+
+        function isValidEmail(email) {
+            // Very basic email validation, you may want to use a more robust approach
+            var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+    });
+</script>

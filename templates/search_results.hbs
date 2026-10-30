@@ -1,0 +1,129 @@
+<div class="container-divider"></div>
+<div class="container">
+  <nav class="sub-nav">
+    {{breadcrumbs}}
+    {{search submit=false}}
+  </nav>
+
+  <header class="page-header">
+    <h1>{{t 'search_results'}}</h1>
+    <p class="page-header-description">{{t 'results' query=query count=results_count}}</p>
+  </header>
+    <div id="sc-ai-panel-wrap" style="margin:16px 0 24px;">
+    <div id="sc-ai-embed"
+         data-query="{{query}}"
+         style="width:100%;height:420px;border-radius:12px;border:1px solid #e5e7eb;background:#fff;overflow:hidden;transition:height .2s ease;"></div>
+    <button type="button" onclick="scToggleAIPanelSize('sc-ai-embed','sc-ai-expanded')"
+            style="margin-top:8px;font-size:12.5px;color:#6b7280;background:none;border:none;cursor:pointer;padding:0;">
+      Expand ↕
+    </button>
+  </div>
+
+  <style>
+    #sc-ai-embed.sc-ai-expanded { height: 750px; }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var el = document.getElementById('sc-ai-embed');
+      var query = el ? el.getAttribute('data-query') : '';
+      scRunSearchPageAI('sc-ai-embed', query);
+    });
+  </script>
+
+  <div class="search-results">
+    
+    {{#if help_center.community_enabled}}
+      <section class="search-results-column">
+        <h3 class="search-results-subheading">
+          {{t 'community'}}
+        </h3>
+        {{#if post_results}}
+          <ul class="search-results-list">
+            {{#each post_results}}
+              <li class="search-result">
+                <a href="{{url}}" class="search-result-link" style="font-weight:bold">{{title}}</a>
+                <span class="search-result-meta-count">
+                  {{comment_count}}
+                </span>
+                <ul class="meta-group">
+                  <li>
+                    <ol class="breadcrumbs search-result-breadcrumbs">
+                      {{#each path_steps}}
+                        <li title="{{name}}"><a href="{{url}}">{{name}}</a></li>
+                      {{/each}}
+                    </ol>
+                  </li>
+                  <li class="meta-data">
+                    {{#link 'user_profile' id=author.id}}
+                      {{author.name}}
+                    {{/link}}
+                  </li>
+                  <li class="meta-data">{{date created_at timeago=true}}</li>
+                </ul>
+                <div class="search-result-description">
+                  {{text}}
+                </div>
+              </li>
+            {{/each}}
+          </ul>
+        {{else}}
+          <p>
+            {{t 'no_results' query=query}}
+            {{#link 'topics'}}
+              {{t 'browse_community'}}
+            {{/link}}
+          </p>
+        {{/if}}
+      </section>
+    {{/if}}
+    
+    <section class="search-results-column">
+      <h3 class="search-results-subheading">
+        {{t 'knowledge_base'}}
+      </h3>
+      {{#if article_results}}
+        <ul class="search-results-list">
+          {{#each article_results}}
+            <li class="search-result">
+              <a href="{{url}}" class="search-result-link" style="font-weight:bold">{{title}}</a>
+              {{#if vote_sum}}
+                <span class="search-result-votes meta-count">{{vote_sum}}</span>
+              {{/if}}
+              <ul class="meta-group">
+                <li>
+                  <ol class="breadcrumbs search-result-breadcrumbs">
+                    {{#each path_steps}}
+                      {{#is url '#'}}
+                        <li title="{{name}}">{{name}}</li>
+                      {{else}}
+                        <li title="{{name}}"><a href="{{url}}">{{name}}</a></li>
+                      {{/is}}
+                    {{/each}}
+                  </ol>
+                </li>
+                <li class="meta-data">
+                  {{#link 'user_profile' id=author.id}}
+                    {{author.name}}
+                  {{/link}}
+                </li>
+                <li class="meta-data">{{date created_at timeago=true}}</li>
+              </ul>
+              <div class="search-result-description">{{text}}</div>
+            </li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <p>
+          {{t 'no_results' query=query}}
+          {{#link 'help_center'}}
+            {{t 'browse_knowledge_base'}}
+          {{/link}}
+        </p>
+      {{/if}}
+    </section>
+
+  </div>
+
+  {{pagination}}
+</div>

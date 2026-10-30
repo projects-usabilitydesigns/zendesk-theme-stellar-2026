@@ -1,0 +1,215 @@
+<div class="sc-page sc-page--portal">
+<main id="main-content">
+  <section class="sc-hero sc-hero--lg" style="background-image: url('{{asset 'hero-map.png'}}'), linear-gradient(180deg, #1a3578 0%, #16306f 100%);">
+    <div class="sc-container sc-hero__inner">
+      <h1 class="sc-hero__title">Customer Success Portal</h1>
+      <p class="sc-hero__subtitle">We're dedicated to providing our customers and partners with timely, high-quality technical support.</p>
+      <div class="sc-search">
+        <span class="sc-search__ai" aria-hidden="true"><svg class="sc-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 3l1.9 5.1L17 10l-5.1 1.9L10 17l-1.9-5.1L3 10l5.1-1.9z"/><path d="M18 2l.8 2.2L21 5l-2.2.8L18 8l-.8-2.2L15 5l2.2-.8z"/></svg>AI</span>
+        {{search submit=false instant=settings.instant_search class='sc-search__form' placeholder='Ask AI or search for articles, topics, or keywords...'}}
+        <button class="sc-search__submit" type="button" aria-label="Search" onclick="var f=this.parentNode.querySelector('form'); if(f){f.submit();}">
+          <svg class="sc-icon sc-icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  {{#if signed_in}}
+  <section class="sc-section">
+    <div class="sc-container sc-intro sc-intro--solo">
+      <div>
+        <h2 class="sc-heading"><span class="sc-heading__accent">Stellar</span> Cyber Customer Success</h2>
+        <p class="sc-intro__text">
+          We are here to help customers to alleviate issues, expand product use and optimize their value from
+          <strong>Stellar Cyber's solutions.</strong> Stellar Cyber offers software SLAs to address the most demanding uptime requirements.
+          Response times and target resolution times can range from as little as one hour to several business days based on the level of the request.
+        </p>
+        <h2 class="sc-subheading">Explore</h2>
+        <div class="sc-card-grid sc-card-grid--3">
+          <article class="sc-card">
+            <div class="sc-card__top">
+              <span class="sc-card__icon" aria-hidden="true"><svg class="sc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h5"/><circle cx="16.5" cy="16.5" r="3.2"/><path d="M16.5 15v2l1.2.7"/></svg></span>
+              <h3 class="sc-card__title">Training and Certification</h3>
+            </div>
+            <p class="sc-card__text">Request to onboard or configure a new integration.</p>
+            <a class="sc-card__more" href="https://academy.stellarcyber.ai/users/sign_in?next=%2Fdashboard" target="_blank" rel="noopener">Learn More &gt;</a>
+          </article>
+          <article class="sc-card">
+            <div class="sc-card__top">
+              <span class="sc-card__icon" aria-hidden="true"><svg class="sc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8 14h.01M12 14h.01M16 14h.01"/></svg></span>
+              <h3 class="sc-card__title">Events</h3>
+            </div>
+            <p class="sc-card__text">Upcoming platform events</p>
+            <a class="sc-card__more" href="https://stellarcyber.ai/resources/stellarcyber-events/" target="_blank" rel="noopener">Learn More &gt;</a>
+          </article>
+          <article class="sc-card">
+            <div class="sc-card__top">
+              <span class="sc-card__icon" aria-hidden="true"><svg class="sc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></span>
+              <h3 class="sc-card__title">Blog</h3>
+            </div>
+            <p class="sc-card__text">Latest insights updates</p>
+            <a class="sc-card__more" href="https://stellarcyber.ai/resources/blogs/" target="_blank" rel="noopener">Learn More &gt;</a>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sc-signed-in-home">
+    <div class="container">
+      <div class="sc-topics-heading">
+        <h3>What do you need help with?</h3>
+        <p>Choose a topic below and our AI will help you find the right solution.</p>
+      </div>
+
+      <div class="sc-topic-grid">
+        <div class="sc-topic-card" style="cursor:pointer;" onclick="window.location.href='/hc/en-us/p/ask-ai?ai_message=I%20need%20help%20with%20a%20new%20connector%20or%20integration%20request';">
+          <div class="sc-topic-icon sc-topic-icon-blue"><i class="fa fa-random" aria-hidden="true"></i></div>
+          <div class="sc-topic-tag sc-topic-tag-blue">Integration</div>
+          <div class="sc-topic-title">New Request</div>
+          <div class="sc-topic-desc">Request to onboard or configure a new integration.</div>
+        </div>
+
+        <div class="sc-topic-card">
+          <div class="sc-topic-icon sc-topic-icon-green"><i class="fa fa-search" aria-hidden="true"></i></div>
+          <div class="sc-topic-tag sc-topic-tag-orange">Integration</div>
+          <div class="sc-topic-title">Investigation</div>
+          <div class="sc-topic-desc">Troubleshoot an existing integration or data flow.</div>
+        </div>
+
+        <div class="sc-topic-card">
+          <div class="sc-topic-icon sc-topic-icon-blue"><i class="fa fa-wifi" aria-hidden="true"></i></div>
+          <div class="sc-topic-tag sc-topic-tag-blue">Sensor</div>
+          <div class="sc-topic-title">New Request</div>
+          <div class="sc-topic-desc">Deploy, configure or onboard a new sensor.</div>
+        </div>
+
+        <div class="sc-topic-card">
+          <div class="sc-topic-icon sc-topic-icon-green"><i class="fa fa-line-chart" aria-hidden="true"></i></div>
+          <div class="sc-topic-tag sc-topic-tag-orange">Sensor</div>
+          <div class="sc-topic-title">Investigation</div>
+          <div class="sc-topic-desc">Resolve sensor health, connectivity or data collection issues.</div>
+        </div>
+
+        <div class="sc-topic-card">
+          <div class="sc-topic-icon sc-topic-icon-orange"><i class="fa fa-server" aria-hidden="true"></i></div>
+          <div class="sc-topic-tag sc-topic-tag-orange">Platform (DP)</div>
+          <div class="sc-topic-title">Investigation</div>
+          <div class="sc-topic-desc">Investigate platform, UI, alerts, performance or processing issues.</div>
+        </div>
+
+        <div class="sc-topic-card">
+          <div class="sc-topic-icon sc-topic-icon-purple"><i class="fa fa-lock" aria-hidden="true"></i></div>
+          <div class="sc-topic-title">EAP Access</div>
+          <div class="sc-topic-desc">Request access to an Early Access Program.</div>
+        </div>
+
+        <div class="sc-topic-card">
+          <div class="sc-topic-icon sc-topic-icon-gold"><i class="fa fa-star" aria-hidden="true"></i></div>
+          <div class="sc-topic-title">Make Us Better (Enhancement)</div>
+          <div class="sc-topic-desc">Share product feedback or suggest a new capability.</div>
+        </div>
+
+        <div class="sc-topic-card sc-topic-card-link">
+          {{#link 'requests'}}
+            <div class="sc-topic-icon sc-topic-icon-navy"><i class="fa fa-envelope" aria-hidden="true"></i></div>
+            <div class="sc-topic-title">My Requests</div>
+            <div class="sc-topic-desc">Skip guided assistance and open a support ticket, or check on ones you already have.</div>
+          {{/link}}
+        </div>
+      </div>
+
+      <div class="tier_label secondary">More resources</div>
+      <div class="secondary_tiles">
+        {{#if help_center.community_enabled}}
+        {{#link 'community' class='secondary_link'}}
+          <i class="fa fa-users" aria-hidden="true"></i> {{t 'community'}}
+        {{/link}}
+        {{/if}}
+        <a href="https://stellarcyber.ai/resources/stellarcyber-events/" class="secondary_link" target="_blank" rel="noopener">
+          <i class="fa fa-calendar-check-o" aria-hidden="true"></i> Events
+        </a>
+        <a href="https://stellarcyber.ai/resources/blogs/" class="secondary_link" target="_blank" rel="noopener">
+          <i class="fa fa-rss-square" aria-hidden="true"></i> Blog
+        </a>
+        <a href="https://stellarcyber.ai/resources/use-case-videos/" class="secondary_link" target="_blank" rel="noopener">
+          <i class="fa fa-video-camera" aria-hidden="true"></i> Videos
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    .sc-topics-heading{text-align:center;margin:8px 0 16px;}
+    .sc-topics-heading h3{font-size:20px !important;font-weight:800 !important;color:#0a1a33 !important;margin:0 0 4px;}
+    .sc-topics-heading p{color:#6b7280;font-size:13px;margin:0;}
+    .blue_container.nopadding{padding-top:12px !important;}
+    .sc-topic-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:10px;}
+    @media (max-width:900px){.sc-topic-grid{grid-template-columns:repeat(2,1fr);}}
+    .sc-topic-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;}
+    .sc-topic-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:16px;}
+    .sc-topic-icon-blue{background:#eff6ff;color:#3b82f6;}
+    .sc-topic-icon-green{background:#f0fdf4;color:#16a34a;}
+    .sc-topic-icon-orange{background:#fff7ed;color:#ea580c;}
+    .sc-topic-icon-purple{background:#fdf4ff;color:#9333ea;}
+    .sc-topic-icon-gold{background:#fef3c7;color:#d97706;}
+    .sc-topic-icon-navy{background:#eef1fb;color:#0a1a33;}
+    .sc-topic-tag{font-weight:800;font-size:14px;margin-bottom:2px;}
+    .sc-topic-tag-blue{color:#2f6fed;}
+    .sc-topic-tag-orange{color:#d9660f;}
+    .sc-topic-title{font-weight:800;color:#0a1a33;font-size:14.5px;}
+    .sc-topic-desc{font-size:12.5px;color:#6b7280;margin-top:6px;line-height:1.5;}
+    .sc-topic-card-link{padding:0;}
+    .sc-topic-card-link a{display:block;padding:20px;text-decoration:none;color:inherit;}
+  </style>
+  {{else}}
+  <section class="sc-section">
+    <div class="sc-container sc-intro">
+      <div>
+        <h2 class="sc-heading"><span class="sc-heading__accent">Stellar</span> Cyber Customer Success</h2>
+        <p class="sc-intro__text">
+          We are here to help customers to alleviate issues, expand product use and optimize their value from
+          <strong>Stellar Cyber's solutions.</strong> Stellar Cyber offers software SLAs to address the most demanding uptime requirements.
+          Response times and target resolution times can range from as little as one hour to several business days based on the level of the request.
+        </p>
+
+        <h2 class="sc-subheading">Explore</h2>
+        <div class="sc-card-grid sc-card-grid--3">
+          <article class="sc-card">
+            <div class="sc-card__top">
+              <span class="sc-card__icon" aria-hidden="true"><svg class="sc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h5"/><circle cx="16.5" cy="16.5" r="3.2"/><path d="M16.5 15v2l1.2.7"/></svg></span>
+              <h3 class="sc-card__title">Training and Certification</h3>
+            </div>
+            <p class="sc-card__text">Request to onboard or configure a new integration.</p>
+            <a class="sc-card__more" href="https://academy.stellarcyber.ai/users/sign_in?next=%2Fdashboard" target="_blank" rel="noopener">Learn More &gt;</a>
+          </article>
+          <article class="sc-card">
+            <div class="sc-card__top">
+              <span class="sc-card__icon" aria-hidden="true"><svg class="sc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8 14h.01M12 14h.01M16 14h.01"/></svg></span>
+              <h3 class="sc-card__title">Events</h3>
+            </div>
+            <p class="sc-card__text">Upcoming platform events</p>
+            <a class="sc-card__more" href="https://stellarcyber.ai/resources/stellarcyber-events/" target="_blank" rel="noopener">Learn More &gt;</a>
+          </article>
+          <article class="sc-card">
+            <div class="sc-card__top">
+              <span class="sc-card__icon" aria-hidden="true"><svg class="sc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></span>
+              <h3 class="sc-card__title">Blog</h3>
+            </div>
+            <p class="sc-card__text">Latest insights updates</p>
+            <a class="sc-card__more" href="https://stellarcyber.ai/resources/blogs/" target="_blank" rel="noopener">Learn More &gt;</a>
+          </article>
+        </div>
+      </div>
+
+      <aside class="sc-signin" aria-label="Sign in">
+        <a class="sc-btn sc-btn--primary" href="https://success.stellarcyber.ai/auth/v3/signin">Sign In</a>
+        <p>New to stellar cyber? <a href="https://success.stellarcyber.ai/auth/v3/register">Sign Up</a></p>
+        <p>Have you Emailed us? <a href="https://stellarcyber.zendesk.com/auth/v2/login/password_reset?auth_origin=360000604032%2Cfalse%2Ctrue&amp;brand_id=360000604032&amp;return_to=https%3A%2F%2Fstellarcyber.zendesk.com%2Fhc%2Fen-us&amp;theme=hc">Get a Password</a></p>
+        <p class="sc-signin__note">If you've communicated with our support staff through email previously, you're already registered.</p>
+      </aside>
+    </div>
+  </section>
+  {{/if}}
+</main>
+</div>

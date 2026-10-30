@@ -1,0 +1,103 @@
+<div class="container" style="max-width:1000px;">
+
+  <p style="margin:20px 0 4px;font-size:13px;">
+    {{#link 'help_center'}}← Back to Home{{/link}}
+  </p>
+
+  <div style="display:flex;align-items:center;gap:12px;margin:4px 0 20px;">
+    <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">✦</div>
+    <div>
+      <h1 style="font-size:20px;margin:0 0 2px;color:#111827;">Stellar Cyber AI</h1>
+      <p id="sc-ai-status" style="font-size:12.5px;color:#6b7280;margin:0;">Loading…</p>
+    </div>
+  </div>
+
+  <div id="sc-ai-embed" style="width:100%;height:650px;border-radius:12px;border:1px solid #e5e7eb;background:#fff;overflow:hidden;"></div>
+
+  <p style="text-align:center;font-size:11px;color:#9ca3af;margin:14px 0 40px;">
+    This link can be shared directly — anyone who opens it lands here and can start a conversation with Stellar Cyber AI.
+  </p>
+
+</div>
+
+<script>
+(function () {
+  // Same routing field used everywhere else this session: the "Route to
+  // Triage" rule in Admin Center only assigns a conversation to the Triage
+  // Agent when this field equals "triage".
+  var SC_ROUTING_FIELD_ID = '45728853515405';
+  var SC_ROUTING_VALUE = 'triage';
+
+  function getQueryParam(name) {
+    var params = new URLSearchParams(window.location.search);
+    return params.get(name);
+  }
+
+  function setStatus(text) {
+    var el = document.getElementById('sc-ai-status');
+    if (el) el.textContent = text;
+  }
+
+  function startAI() {
+    var initialMessage = getQueryParam('ai_message');
+
+    // Route this conversation to the Triage Agent before rendering/starting it.
+    zE('messenger:set', 'conversationFields', [
+      { id: SC_ROUTING_FIELD_ID, value: SC_ROUTING_VALUE }
+    ], function () {
+
+      // Closer to a plain, wide "Gemini-style" look: no bubble background on
+      // AI/business messages, compact chat-style baseline.
+      try {
+        zE('messenger:set', 'customization', {
+          common: { stylingPreset: 'minimalistic' }
+        });
+      } catch (e) {}
+
+      zE('messenger', 'render', {
+        mode: 'embedded',
+        widget: { targetElement: '#sc-ai-embed' }
+      }, function (error) {
+        if (error) {
+          setStatus('Could not load chat: ' + error.reason);
+          return;
+        }
+
+        // Explicitly (re)assert session auth right after rendering — this is
+        // the step that actually made the Copenhagen test work, regardless
+        // of whatever header.hbs's own auth attempted. Belt-and-suspenders
+        // even after header.hbs is fixed to use this directly too.
+        try { zE('messenger', 'useSessionAuth'); } catch (e) {}
+
+        setStatus('Usually replies in a few seconds');
+
+        // Always start a genuinely new conversation on this page — with a
+        // pre-filled message if one was provided via the URL, or empty
+        // (letting the customer type their own first message) if not.
+        // Without this, visiting with no ?ai_message= would just resume
+        // whatever conversation was last active instead of starting fresh.
+        setTimeout(function () {
+          var newConvOptions = initialMessage
+            ? { message: { content: { type: 'text', text: initialMessage } } }
+            : {};
+          zE('messenger:ui', 'newConversation', newConvOptions, function (err) {
+            if (err) {
+              console.error('ask-ai: newConversation failed', err.reason, err.message);
+            }
+          });
+        }, 800); // small delay so the embed has finished mounting
+      });
+    });
+  }
+
+  function waitForZE() {
+    if (typeof zE === 'undefined') {
+      setTimeout(waitForZE, 250);
+      return;
+    }
+    startAI();
+  }
+
+  document.addEventListener('DOMContentLoaded', waitForZE);
+})();
+</script>

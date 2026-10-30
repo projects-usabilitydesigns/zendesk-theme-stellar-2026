@@ -1,0 +1,148 @@
+<style>
+  .password-container {
+      position: relative;
+  }
+
+  .password-field {
+      padding-right: 30px; /* Space for the eye icon */
+  }
+  body {
+    background-color: #f0f0f0 !important;
+  }
+  a {
+    font-weight: 800 !important; 
+  }
+  a:hover {
+    text-decoration: underline !important;
+    font-weight: 800 !important;
+  }
+  .eye-icon {
+      position: absolute;
+      top: 50%;
+      right: 5px;
+      transform: translateY(-50%);
+      cursor: pointer;
+  }
+  .login.help_center {
+    background-color: #fff !important;
+    border:solid 1px #ccc !important;
+    margin: 0px !important;
+    filter: drop-shadow(0px 0px 13px #cfcfcf) !important;
+  }
+  .login-form input[type="text"],
+  .login-form input[type="email"],
+  .login-form input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 16px !important;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+  }
+  .login-form button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 18px !important;
+      margin: 5px 0px 8px !important;
+      opacity: 1.0;
+  }
+</style>
+<div class="modal signin" role="dialog" aria-labelledby="signin_title" style="margin:5% auto 5%; width:500px;">
+  <div class="login help_center">
+    <div class="interface outer">
+      <h2 class="updated_title" id="signin_title">
+        Sign in to Stellar Cyber
+        <div class="roles_new" id="zendesk-js-login-roles">
+          <a class="switch_link role agent" href="/auth/v2/login/signin?auth_origin=360000604032%2Ctrue%2Ctrue&amp;brand_id=360000604032&amp;locale=en-us&amp;return_to=https%3A%2F%2Fsuccess.stellarcyber.ai%2Fhc%2Fen-us&amp;role=agent&amp;theme=hc"><span style="font-size:18px; font-weight:800;">Switch to agent sign-in</span><i class="chevron" alt-text=""></i></a>
+        </div>
+      </h2>
+
+      <div class="interface inner">
+        <div class="services internal">
+          <form id="login-form" class="login-form" autocomplete="off" action="https://success.stellarcyber.ai/access/login" accept-charset="UTF-8" method="post">
+            <input type="hidden" id="authenticity_token" name="authenticity_token" value="j1TN2sQkdbY_LWJ7k6bZecIW2g0UwsUqnDZGU_0Fpsg=" autocomplete="off">
+            <input type="hidden" name="return_to_on_failure" id="return_to_on_failure" value="https://success.stellarcyber.ai/hc/en-us/p/login_error" autocomplete="off">
+            <input type="hidden" name="return_to" id="return_to" value="https://success.stellarcyber.ai/hc/en-us" autocomplete="off">
+            <input type="hidden" name="brand_id" id="brand_id" value="360000604032" autocomplete="off">
+            <input type="hidden" name="theme" id="theme" value="hc" autocomplete="off">
+            <input type="hidden" name="auth_origin" id="auth_origin" value="360000604032,true,true" autocomplete="off">
+            <input type="hidden" name="form_origin" id="form_origin" value="hc" autocomplete="off">
+            <div class="credentials">
+              <label for="user_email">Email</label>
+              <input autofocus="autofocus" autocomplete="email" required="required" type="email" name="user[email]" id="user_email">
+              <label for="user_password">Password</label>
+              <div class="password-container">
+                <input autocomplete="current-password" class="text wide validate_password" required="required" aria-describedby="sr-password-requirements" aria-invalid="false" type="password" name="user[password]" id="user_password">
+                <i class="eye-icon" onclick="togglePassword()"><svg id="show-password-toggle-svg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 12 12">  <g fill="currentColor">  <circle cx="6" cy="6" r="1.5"></circle>  <path d="M11.79 5.34C11.08 4.33 9.1 2 6 2S.92 4.33.21 5.34c-.28.4-.28.93 0 1.32C.92 7.67 2.9 10 6 10s5.08-2.33 5.79-3.34c.28-.39.28-.93 0-1.32zM6 8.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"></path></g> </svg></i>
+              </div>
+                  <!-- <button name="show-hide-password-button" type="button" role="switch" id="show-password-toggle-button" aria-checked="false" aria-label="Show password">
+                    <svg id="show-password-toggle-svg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 12 12">  <g fill="currentColor">  <circle cx="6" cy="6" r="1.5"></circle>  <path d="M11.79 5.34C11.08 4.33 9.1 2 6 2S.92 4.33.21 5.34c-.28.4-.28.93 0 1.32C.92 7.67 2.9 10 6 10s5.08-2.33 5.79-3.34c.28-.39.28-.93 0-1.32zM6 8.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"></path></g> </svg>
+                  </button>        
+                  <p aria-live="polite" id="sr-show-password-button-state" class="visually-hidden"></p> -->
+              <div class="forgot_password" id="zendesk-js-forgot-password">
+                <a class="auth-actions" href="https://stellarcyber.zendesk.com/auth/v2/login/password_reset?auth_origin=360000604032%2Ctrue%2Ctrue&amp;brand_id=360000604032&amp;return_to=https%3A%2F%2Fsuccess.stellarcyber.ai%2Fhc%2Fen-us&amp;theme=hc">Forgot password?</a>
+              </div>
+            </div>
+
+            <div class="clear"></div>
+
+            <button name="button" type="submit" id="sign-in-submit-button" class="c-btn c-btn--primary auth-actions">Sign in</button>
+</form>
+          <div class="clear"></div>
+        </div>
+
+        <div class="clear"></div>
+        <div class="clear"></div>
+      </div>
+    </div>
+
+      <div class="new_signin_footnotes">
+          <p class="get_password question">
+            <span class="question-text">Emailed us for support?</span>
+            <a class="auth-actions" href="https://stellarcyber.zendesk.com/auth/v2/login/password_reset?auth_origin=360000604032%2Ctrue%2Ctrue&amp;brand_id=360000604032&amp;return_to=https%3A%2F%2Fsuccess.stellarcyber.ai%2Fhc%2Fen-us&amp;theme=hc">Get a password</a>
+          </p>
+          <div class="sign_up question">
+            <span class="question-text">New to Stellar Cyber?</span>
+            <a class="auth-actions" href="https://success.stellarcyber.ai/hc/p/signup">Sign up</a>
+          </div>
+      </div>
+  </div>
+</div>
+<script>
+  function togglePassword() {
+      var passwordField = document.getElementById("user_password");
+      if (passwordField.type === "password") {
+          passwordField.type = "text";
+      } else {
+          passwordField.type = "password";
+      }
+  }
+  jQuery.ajax({
+    url: 'https://success.stellarcyber.ai/api/v2/auth/cross_site_verification',
+    type: 'GET',
+    dataType: 'html',
+    success: function(data) {
+        // Create a temporary div element to parse the HTML
+        var tempDiv = $('<div>');
+        tempDiv.html(data);
+
+        // Find the meta tag with name="csrf-token"
+        var csrfToken = tempDiv.find('meta[name="csrf-token"]').attr('content');
+        jQuery("#authenticity_token").val(csrfToken);
+
+        // Use the CSRF token
+        console.log('CSRF Token:', csrfToken);
+    },
+    error: function(xhr, status, error) {
+        console.error('Error fetching CSRF token:', error);
+    }
+});
+
+    
+</script>
